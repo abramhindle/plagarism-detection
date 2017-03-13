@@ -1,0 +1,2455 @@
+%\documentclass[conference]{IEEEtran}
+\RequirePackage{fix-cm}
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[10pt, conference, compsocconf]{IEEEtran}
+\usepackage{graphicx}
+%\usepackage{subfig}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{balance}
+\usepackage{array}
+\hyphenation{op-tical net-works semi-conduc-tor trace-ability
+  re-quire-ments practi-tioners}
+\usepackage{multirow}
+\usepackage{relsize}
+\newcommand{\Cpp}{{C\raisebox{0.2ex}{\ensuremath{\mathsmaller{++}}}}\xspace}
+\usepackage{paralist}
+\usepackage{color}
+\usepackage{fancybox}
+\usepackage{url}
+\usepackage{listings}
+%\usepackage[margin=10pt,font=small,labelfont=bf,labelsep=endash]{caption}
+\usepackage{float}
+\usepackage{comment}
+\restylefloat{figure}
+\usepackage{array}
+\usepackage{numprint}
+%\npthousandsep{ }
+\npthousandsep{\thinspace}\npthousandthpartsep{}\npdecimalsign{.}
+\usepackage{mdwmath}
+\usepackage{mdwtab}
+
+\usepackage{eqparbox}
+%
+\usepackage{fixltx2e}
+
+
+\newcommand{\shrinkit}{\vspace*{-0.1em}}
+\renewcommand{\shrinkit}{}
+
+%\IEEEoverridecommandlockouts
+%\IEEEpubid{\makebox[\columnwidth]{978-1-4673-2312-3/12/\$31.00~\copyright~2012 IEEE \hfill} \hspace{\columnsep}\makebox[\columnwidth]{ }}
+
+\widowpenalty=500
+\clubpenalty=500
+
+%\raggedbottom
+% \renewcommand\baselinestretch{.98}
+% \renewcommand\floatpagefraction{.9}
+% \renewcommand\topfraction{.9}
+% \renewcommand\bottomfraction{.9}
+% \renewcommand\textfraction{.1}   
+% \setcounter{totalnumber}{50}
+% \setcounter{topnumber}{50}
+% \setcounter{bottomnumber}{50}
+% \addtolength{\textfloatsep}{-5mm}
+% 
+          \clubpenalty = 10000
+          \widowpenalty = 10000
+          \displaywidowpenalty = 10000
+
+
+\DeclareCaptionType{copyrightbox}
+
+        
+\newcommand{\XXX}[1]{\textcolor{red}{{\it \textbf{[XXX: #1]}}}}
+
+
+
+\begin{document}
+\title{
+Do Topics Make  Sense to Managers and Developers?%\\
+%Do Topics Extracted from Requirements and Bug Reports Make
+%An evaluation of topics extracted from issue reports and requirements documentation
+}
+
+\journalname{Empirical Software Engineering}
+
+% \author{
+% Abram Hindle
+% }
+
+% \institute{
+% Abram Hindle \at
+% Department of Computing Science,\\
+% University of Alberta,\\
+% Canada\\
+% \email{abram.hindle@ualberta.ca}
+% }
+
+
+
+%\usepackage{xspace}
+\newcommand{\flossn}{13 }
+
+\author{
+Abram Hindle \and
+Christian Bird \and 
+Thomas Zimmermann \and 
+Nachiappan Nagappan
+}
+
+
+\institute{Abram Hindle \at
+Department of Computing Science\\
+University of Alberta\\
+Edmonton, Canada\\
+\email{abram.hindle@softwareprocess.es}\\
+\and
+Christian Bird and Thomas Zimmermann and Nachiappan Nagappan \at
+Microsoft Research\\
+Redmond, WA, USA\\
+\email{\{cbird,tzimmer,nachin\}@microsoft.com}}
+
+
+
+%\maketitle
+
+
+\maketitle
+
+% one. two. three.
+
+\begin{abstract}
+
+Large organizations like Microsoft tend to rely on formal requirements
+documentation in order to specify and design the software products
+that they develop. These documents are meant to be tightly coupled
+with the actual implementation of the features they describe. In this
+paper we evaluate the value of high-level topic-based requirements
+traceability and issue report traceability in the version control
+system, using \emph{Latent Dirichlet Allocation} (LDA). We evaluate
+LDA topics on practitioners and check if the topics and trends
+extracted match the perception that industrial Program Managers and
+Developers have about the effort put into addressing certain topics.
+We then replicate this study again on Open Source Developers using
+%<<<<<<< HEAD
+%issue
+%reports from issue trackers instead of requirements, 
+%confirming our previous industrial conclusions.
+%We found
+%that effort extracted from version control relevant to
+%a topic often matched the perception of the managers and
+%developers of what occurred at the time. 
+%Furthermore we found evidence that many of the identified topics made
+%sense to practitioners and matched their perception of what occurred. But
+%for some topics, 
+%we found that practitioners had difficulty interpreting and
+%labelling them.
+%% We found some evidence that topics were sometimes difficult to label
+%% and were often more useful when already labelled.
+%% %Furthermore we
+%% %found evidence that the identified topics were difficult to label
+%% %and were more useful when labelled. 
+%In summary, we investigate
+%the high-level traceability of requirements topics and bug report
+%topics to version control
+%commits via topic analysis and validate with the actual stakeholders
+%the relevance of these topics extracted from
+%requirements.
+issue reports from issue trackers instead of requirements, confirming
+our previous industrial conclusions. We found that efforts extracted
+as commits from version control systems relevant to a topic often
+matched the perception of the managers and developers of what actually
+occurred at that time. Furthermore we found evidence that many of the
+identified topics made sense to practitioners and matched their
+perception of what occurred. But for some topics, we found that
+practitioners had difficulty interpreting and labelling them. In
+summary, we investigate the high-level traceability of requirements
+topics and issue/bug report topics to version control commits via
+topic analysis and validate with the actual stakeholders the relevance
+of these topics extracted from requirements and issues.
+
+% Large organizations like Microsoft tend to rely on formal requirements
+% documentation in order to specify and design the software products
+% that they develop.  These documents are meant to be tightly coupled
+% with the actual implementation of the features they describe.  In this
+% paper we evaluate the value of high-level topic-based requirements
+% traceability and issue report traceability in the version control
+% system, using Latent Dirichlet Allocation (LDA).  We evaluate LDA
+% topics on practitioners and check if the topics and trends extracted
+% matches the perception that industrial Program Managers and Developers
+% have about the effort put into addressing certain topics.   We then
+% replicate this study again on Open Source Developers using issue
+% reports from issue trackers instead of requirements, essentially
+% confirming our previous industrial conclusions.   We found that effort
+% extracted from version control that was relevant to a topic often
+% matched the perception of the managers and developers of what occurred
+% at the time.   Furthermore we found evidence that many of the
+% identified topics made sense to practitioners and matched their
+% perception of what occurred.  But for some topics, we found that
+% practitioners had difficulty interpreting and labelling them.   In
+% summary, we investigate the high-level traceability of requirements
+% topics and bug report topics to version control commits via topic
+% analysis and validate with the actual stakeholders the relevance of
+% these topics extracted from requirements.
+
+
+\end{abstract}
+
+%\begin{IEEEkeywords}
+%latent Dirichlet allocation (LDA); requirements;
+%version control; traceability; topics; requirements engineering
+%\end{IEEEkeywords}
+
+
+%\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+
+
+For many organizations requirements and specifications
+provide the foundation for the products that they produce.  As
+requirements are implemented the links between
+requirements and implementation weaken, especially during
+maintenance.  Later, development artifacts often stop
+referencing the requirements documents that they were
+derived from.  Current research shows that there is a lack of
+traceability between requirements and
+implementation~\cite{aretheirdesignspecsconsistent} %26
+whereas the managers we interviewed expected and wanted
+requirements and implementation to be in sync (Section \ref{sec:surveys}).
+The volume of traceability research confirms its
+importance~\cite{Wiegers,DiscoveringLikelyMethodSpecifications,clelandhuang2005,traceabilityviewpointmerging}.  %20,27,28,29
+In this paper we extract topics from a
+large body of requirements documents and then search for
+commits that mention these topics within the version control
+system.  These topics are represented as word distributions.  These topics provide some high-level traceability
+between requirements and implementation once they are labelled and
+interpreted.
+Yet these topics can be exploited to provide an overview of
+development effort relevant to each topic.
+
+In this paper we attempt to validate these topic-generated overviews
+%, whether between
+%requirements or issue reports and implementation 
+by asking industrial
+developers, industrial program managers, and \emph{Free/Libre Open Source Software}
+(FLOSS) developers if their perception of their own behaviour matches the
+behaviour highlighted by the topic.  We do this by relating the topics
+extracted from requirements and issue reports to the commit log
+messages in version control systems.
+Thus we seek to validate if topics extracted from requirements and
+issue reports make sense to practitioners.
+
+Stakeholder based validation of topics in terms of relevance, labelling, and
+the recovery of behaviour~\cite{Asuncion2010} is critical, but to date
+has not been widely applied to the domain of software
+engineering~\cite{hindle2012rri}.   
+We also ask how well non-experts, such as the authors of this paper, can label topics
+on projects that we did not write.
+The topics we study are extracted using Latent Dirichlet
+Allocation~\cite{Blei2003} (LDA) which has gained popularity in
+software engineering (SE) research~\cite{Hindle2011,Asuncion2010,gethers2011integrating,Grant:2010,Thomas2010,panichella2013effectively,Lukins2008,de2012using}.
+Our contributions include:
+
+\begin{itemize}
+
+\item  A technique for linking requirements to code
+commits via topics.
+
+\item  An evaluation of the relevance of topics extracted
+by LDA from requirements with developers and
+managers.
+
+\item  An analysis of whether topic highlighted behaviour matches
+the perception of industrial developers and managers as well as FLOSS developers.
+
+\item  Insight into the difficulties that practitioners face
+when labelling topics and the need for labelled
+topics.
+
+\item  Validation of non-expert topic labelling with practicing experts.
+
+\item  A FLOSS developer oriented replication of the industrial study on issue tracker topics.
+
+\end{itemize}
+
+
+
+We are investigating if LDA topics make sense to practitioners, and
+whether practitioners can label LDA topics.   We have at our disposal
+many skilled Microsoft developers who work on a very large software
+system that has many requirements documents.  We also have the 
+participation of \flossn gracious and skilled \emph{Free/Libre Open Source
+  Software} (FLOSS) developers associated with \flossn different FLOSS
+projects, each with issue trackers and version control systems.   Thus
+we investigate if practitioners face difficulties interpreting topics,
+if unlabelled topics are enough, and if familiarity with the source
+and domain of the topics matters.
+
+
+
+\subsection{ Motivation}
+
+
+Latent Dirichlet Allocation (LDA)~\cite{Blei2003} and Latent Semantic
+Indexing (LSI)~\cite{marcus2003recovering} are popular tools in software engineering
+research \cite{Baldi2008,Savage2010,Thomas2011,Thomas2010}.  They are
+often used for traceability and information
+retrieval, but their use is built upon assumptions regarding usability.
+We validate this usability of topics assumption with 
+managers and developers from our prior
+work~\cite{hindle2012rri} and FLOSS developers in this extension.
+Often in SE literature these topics are interpreted solely by the researchers
+themselves (e.g., \cite{Hindle2011}).  Thus the use of topic analysis
+through algorithms like LDA and LSI in software engineering has not been
+widely and rigorously validated with actual developers and managers.
+The core motivation of this work is to validate: if topic
+analysis (with LDA) of requirements documents produces
+topics relevant to practitioners; if the extracted topics make
+sense to software developers; and if the development
+behaviour associated with a topic matches the perception
+shared by the practitioners.  This work could be used in
+traceability tools, project dashboards for managers, effort
+models, and knowledge management systems.
+
+In prior work we felt that topics needed to be labelled to be useful~\cite{Hindle2011}.
+We were motivated by the belief that labelled topics allow stakeholders such as
+managers to track development efforts related to these extracted
+topics.   We sought to evaluate the effectiveness of depicting document relevance to topics over time
+as \emph{topic-plots} (see Figure \ref{fig:topicplot} for an example).
+Thus we ask stakeholders to help verify if combining topics with commits
+ allows for local analysis of
+requirements-relevant effort of different groups of developers or
+teams.
+An example scenario we are targeting would be
+a manager who is trying to identify how
+much effort 
+went into addressing different requirements.
+%and when different aspects of the requirement documents
+%were addressed.   
+Managers could try to answer the question, ``Who
+should I talk to regarding a requirement change in the bluetooth
+stack?'' by using individual developer topic-plots and correlating the developer's
+visible effort within a bluetooth related topic.
+
+% “ ”
+
+
+\begin{figure}
+  \centering
+\includegraphics[width=0.6\textwidth]{figures/model}
+\caption{Our data model. Topics are extracted from Requirements using
+LDA.  Topics are related to requirements in a many-to-many relationship.
+Commits are related to topics via LDA document-topic inference.}
+\label{fig:model}
+\end{figure}
+
+\subsection{Extension and Replication}
+
+This work differs from our previous ICSM 2012 publication~\cite{hindle2012rri}
+because we have extended it with a FLOSS-oriented replication on
+issue-tracker topics rather than requirements topics.
+
+We repeated most of the industrial methodology with the FLOSS
+developers: we sought out FLOSS developers and presented them with a very
+similar survey.  We then aggregated the results and compared.  Thus the
+field work associated with the FLOSS survey was equivalent or larger in scale than the
+industrial case study.
+
+In this paper, we added a comparison between the case studies and discussed
+the results of the FLOSS study in depth.  For the sake of brevity we
+have combined the methodologies into one general description and
+included special cases for the FLOSS study when necessary.
+
+
+\section{Background and Previous Work}
+
+
+
+
+
+Our work fits into traceability, requirements engineering, issue
+tracker querying, and topic analysis~\cite{Cheng2007,clelandhuang2005,traceabilityviewpointmerging,Lukins2008,Thomas2010}.
+
+% Our work fits into the field of requirements engineering
+% \cite{Cheng2007,clelandhuang2005,traceabilityviewpointmerging}, in particular requirements validation and
+% requirements management.  
+% %Furthermore it is relevant to
+% %conceptual modeling~\cite{empiricalstudyenterprise} and knowledge management that
+% %is relevant to software engineering.  
+% Traceability is part of
+% requirements management and validation.
+
+
+\subsection{Traceability and Requirements Engineering}
+
+
+
+Traceability is the linking of software artifacts and popular software engineering
+topic.  Authors such as Ramesh et al.~\cite{Ramesh1998} and De Lucia~\cite{de2012information}
+have provided
+excellent surveys of the literature and the techniques relevant to traceability.
+In terms of \emph{information retrieval} (IR) and traceability Antonional et
+al.~\cite{antoniol2002recovering} first investigated linking documentation
+and source code together using IR techniques including the vector
+space model.
+IR traceability was extended by Marcus et
+al.~\cite{marcus2003recovering} who first employed LSI for
+traceability of documentation to source code.
+Karl Wiegers~\cite{Wiegers} has argued for tagging commits with
+relevant requirements to aide traceability.
+Tillmann et al.~\cite{DiscoveringLikelyMethodSpecifications} have discussed mining specifications by their
+language in order to aid traceability for reverse engineering.
+Kozlenkov and Zisman et al.~\cite{aretheirdesignspecsconsistent} have also studied
+requirements traceability with respect to design documents
+and models.  Ernst et al.~\cite{Ernst2010} traced
+nonfunctional requirements (NFRs) within version control systems (VCSs)
+using
+a simple technique incorporating NFR word dictionaries.
+Murphy et al.~\cite{Murphy2001} defined explicit mappings between
+concepts and changes to files but did not use topics;
+whereas Sneed~\cite{Sneed2007} investigated mining requirements in order
+to produce test cases.  Reiss et al.~\cite{Reiss2006} produced a tool
+called 
+CLIME that allows one to define constraints and track the
+co-evolution of artifacts in order to enforce adherence.
+Poshyvanyk et al.~\cite{Savage2010,poshyvanykthesis,McMillan2009} has explored the use of IR techniques for
+software traceability in source code to other kinds of
+documents.  
+Others within the RE community
+have leveraged natural language processing (NLP) techniques to
+produce UML models~\cite{Konrad2006}.  NLP techniques and IR techniques, such as $n$-grams,
+stemming, bag of words models, and vector space models are used in
+conjunction with topic analysis.
+
+
+
+\subsection{Topics in Software Engineering}
+
+\label{sec:lda}
+
+Topics in software engineering literature are known by
+many names: concerns, concepts, aspects, features, and sometimes even
+requirements.  In this paper, by \emph{topic} we mean a word
+distribution extracted from requirements documents by
+an algorithm such as Latent Dirichlet Allocation (LDA)~\cite{Blei2003}
+that often matches a topic of discussion between authors.
+LDA helps us find topics by looking for independent
+word distributions within numerous documents.  These
+documents are represented as word distributions (i.e., counts
+of words) to LDA.  Given a number $n$ LDA then attempts to
+discover a set of $n$ topics, $n$ word distributions that can
+describe the set of input documents.  Each document is then
+described as a combination of the $n$ topics that are
+extracted.  Thus the end result of topic analysis is a set of $n$
+topics (word distributions) in the form of a the \emph{word-topic matrix},
+and a \emph{topic-document matrix} that provides the
+relationship between documents and topics.  
+
+Documents are not mutually exclusive to topics.
+This means that
+$1$ document can be related to $0$ or $1$ to $n$ topics.
+The allocation part of Latent Dirichlet Allocation implies that words
+and documents are allocated to topics.  But since they can be partially
+relevant to a topic they are also partially allocated.  But the
+allocation implies there is a limit, thus the topics and words
+are shared among topics.  For example, if a document is allocated
+solely and equally to 2 topics the document's row in the topic-document matrix
+will have half of its ``space'' allocated to one topics and the other half
+allocated 
+to the second topic.
+%we will see that half of the space is allocated one topic, and half is
+%allocated to the other topic.  
+If this ``space'' was represented as probability, each entry would be
+$0.5$; if this ``space'' was word counts then the word counts would be
+equal.  Thus while a document can be allocated to many topics, there is
+a limit to how much of a document or word can be allocated to a
+particular topic.  Fundamentally it means that documents are often
+allocated to more than one topic.
+
+Since each LDA topic is a word distribution over many
+words, we must present an alternative representation to end-users such
+as developers and
+managers.  These topics can be
+represented to end-users as a ranked list of words, from
+highest magnitude to lowest magnitude word relevance.  Many researchers
+use top-$10$ lists of words, in this study we used $20$ words.  An
+example topic might be:
+
+\begin{center}
+\emph{code improve change without functionality behaviour readability
+maintainability structure restructure modify reduce quality
+process complexity software re-factoring performance maintain better} % make}
+\end{center}
+
+How would you label this topic? Notice how this topic
+takes time to interpret.  In this paper we investigate the difficulty
+practitioners have when labelling the topic as well as the
+relevance of the topic to practitioners.
+
+There is much software engineering research relevant to
+topics. Many techniques are used, ranging from LDA~\cite{Hindle2011}
+to Latent Semantic Indexing (LSI)~\cite{Marcus2004}. Researchers such as
+Poshyvanyk  et al.~\cite{poshyvanykthesis} and Marcus et al.~\cite{Marcus2004} often focus on
+the document relationships rather than the topic words.
+In terms of topics and traceability, Baldi et al.~\cite{Baldi2008} labelled
+topics and then tried to relate topics to aspects in software.
+Asuncion et al.~\cite{Asuncion2010} used LDA on documentation and source
+code in order to provide traceability links.
+Gethers et al.~\cite{gethers2011integrating} combine IR techniques
+such as Jenson and Shannon, vector space model, and relational topic model
+using LDA, together into one integrated in order to
+aide traceability link recovery. They found this integration of
+techniques achieved better performance than any technique alone.
+
+Grant et al.~\cite{Grant:2010} have worked with LDA and topics before.
+Their 2010 paper suggests heuristics for determining the optimal
+number of topics to extract.
+ Thomas et al.~\cite{Thomas2010}
+statistically validated email to source code traceability using
+LDA. 
+Panichella et al.~\cite{panichella2013effectively} described LDA-GA, a
+genetic algorithm approach to search for appropriate LDA
+hyper-parameters and parameters. They evaluate these parameter choices
+against a range of software engineering tasks and thus evaluate the
+cost-effectiveness of this search approach.
+Both groups did not validate their results with
+practitioners.
+
+Our work builds up on the work of Lukins et al.~\cite{Lukins2008} as
+they apply topic analysis to issue reports as well, but use
+the topics to query for existing issue reports.
+
+In this study we investigate human-generated labels for topics; while other
+researchers have investigated automatically generated labels for
+source code artifacts. De Lucia et al.~\cite{de2012using} investigated
+using IR methods on source code artifacts in order to label software
+artifacts.  They used multiple IR approaches, including LDA and LSI to
+see if they could label or summarize source code and if their approach
+matched human-generated labels.  They found that labelling via simple
+heuristics best matched practitioner labels rather than LSI or LDA.
+
+These studies rely on assumptions about the applicability
+to practitioners.  We investigate some of these assumptions by
+surveying practitioners in order to validate the value of
+topics extracted from requirements.  Furthermore instead of
+tracing individual requirements documents or sections of
+said documents directly, we extract topics from sets of
+requirements and then track those topics within the version
+control's change history.  Original requirements can be
+related to code changes by the topic-document association
+matrix as described in Figure \ref{fig:model}.  Next we describe our
+methodology.
+
+
+
+
+\section{Methodology}
+
+
+
+Our goal is to relate commits to topics of requirements and then validate
+if these topics and plots of topic-relevant commits make sense to stakeholders such as
+developers and managers.
+Our methodology is to extract requirements and issues, perform
+topic analysis on the documents and then infer and link these
+topics across all of the commit log messages in the source
+code repository.  Then we present extracted topics to
+developers and managers and ask them to label the topics.
+After that, we show plots of topic-relevant commits to
+developers and managers and ask whether or not these plots
+actually match their perception of their effort related to the
+ topic.  Finally we analyze and present the results.
+
+
+\begin{figure*}
+%  \centering
+\hspace{-3em}\includegraphics[width=1.3\textwidth]{figures/topic-plots-1}
+\caption{Requirements Topic-Plots: Topics and Relevant revisions over time.  X axis is time, Y
+  axis is the average relevance per time window (greater is
+  more relevant).  The topic-plots are labelled with our non-expert
+  labels.  They are non-expert labels because
+  we were not involved in the project's development. ------ indicate redactions.}
+\label{fig:topicplot}
+\end{figure*}
+
+\begin{figure}
+  \centering
+\hspace{-2em}\includegraphics[height=1.1\textheight]{figures/craftdotnet}
+\caption{Issue Topic-Plots of All FLOSS Developer authors of
+  Craft.NET.  X axis is time, Y axis the average per time window
+  (greater is more relevant). Red dashed lines indicate a release or
+  milestone of importance (major or minor). Topic Labels are the top
+  ranked topic words from LDA.}
+\label{fig:crafttopicplot}
+\end{figure}
+
+
+
+\subsection{Requirements Mining}
+
+
+
+Microsoft stores requirements documents in their
+documentation repository.  Requirements for a project are
+grouped by broad general topics.  The documents are usually
+saved as Word documents within the specification
+repository.  These requirements are usually written by
+program managers (PMs), developers and testers.
+
+
+% The specifications consisted of
+% functional specs as well as other documents such as ``dev specs'' and
+% ``test specs'', which are not explicitly distinct from the requirements
+% documents (the functional specs) that they elaborate on.  
+
+We obtained all of the network component specifications from a popular
+Microsoft product that is used by millions of users and has several
+millions of lines of source code.    We then
+saved each of these specifications as text files for later
+analysis.  This large collection of requirements documents included $75$
+total requirements documents consisting of nearly \numprint{1 500} pages of
+documentation, \numprint{59 000} lines of text, \numprint{35 000} paragraphs, and \numprint{285 000}
+words.  The average document was $20$ pages long with an average word
+count of \numprint{3 800}.
+
+Each requirements document has a title, a list of authors and small
+table of major revisions.  The documents are then further broken down
+into sections much like IEEE documentation such as Software
+Requirements Specification (SRS) (the functional specifications),
+Software Design Description (SDD) (referred to internally as ``dev
+specs''), and Software Test Documentation (referred to internally as
+``test specs'').  Program managers that we interviewed indicated that
+requirements were generally written by the managers and the ``dev
+specs'' and ``test specs'' were written by developers and testers.  The
+requirements were often the result of ``quick specs'' that had become
+``final specs'' via a process of comment elicitation and
+discussion.  Once a requirements document became a ``final spec'', it
+could be scheduled for a milestone and assigned to a team.   
+
+
+
+\subsection{Requirements Topic Mining}
+
+
+\label{sec:requirementstopicmining}
+
+To apply LDA to requirements we had to preprocess the documents.  We converted
+each specification to word distributions (counts of words per
+document)  and removed stop words (common English stop
+words such as ``at'', ``it'', ``to'', and ``the'')~\footnote{The set of stop words used:
+  \url{http://softwareprocess.es/b/stop_words} \label{fn:stop}}.  We stemmed the
+English words using a custom Porter stemmer.  We provided these
+word distributions to our implementation of the LDA algorithm.  Then LDA
+processed the requirements documents and produced the requested number of topics.
+
+The implementation of LDA we used was built by Microsoft and it was a
+parallel implementation of CVB0, a collapsed variational Bayes LDA
+implementation~\cite{ramage2010characterizing,asuncion2009smoothing}.  
+LDA was configured hyper-parameters of $\alpha = 0.1$ and $\beta = 0.1$, and \numprint{1 000}
+iterations were used to extract topics from the requirements documents.
+
+
+
+While authors such as Grant et al.~\cite{Grant:2010} have proposed
+heuristic methods of suggesting the best number of topics, their idea
+relies on fitness functions that are not necessarily human-centric.
+Thus we took a more subjective approach.  This subjective, manual,
+human-approach was taken because we were not convinced that
+silhouetting or genetic algorithms~\cite{panichella2013effectively}
+would be appropriate given our lack of a topic coherency or topic
+readability oracle.  We instead decided to act as this oracle, aiming
+for distinct and readable topics.  This means we were biased to a fewer
+number of topics based on the effort we spent to interpret each topic.
+Thus we made a decision to ignore automated methods of determining the
+optimal number of LDA topics and instead opted for a subjective search
+based on qualities of semantic coherency and topic
+readability/interpretability.
+
+To determine the number of topics to use, we ran LDA multiple times,
+generating $5$, $10$, $20$, $40$, $80$, and $250$ topics.  We then
+chose the number where the extracted topics were distinct
+enough.  This meant the first author applied his own judgment to ensure
+that topics did not have much overlap in top terms, were not copies of
+each other in terms of top words, and did not share excessive disjoint
+concepts or ideas.  Conceptual overlap required human readers who
+understood some of the semantics of the words.  Our number of topics
+selection process was like a manually applied fitness function with the first
+author evaluating the fitness of each set of topics.
+
+Based on these requirements 
+ $20$ topics seemed to produce the most optimal topics
+given our previous requirements.  Thomas et al.~\cite{Thomas2011} reported similar
+results.  We argue that if practitioners were
+following this methodology they would not want many topics because it
+takes time to label each topic, as we personally noticed from this
+tuning step.  This was later confirmed by our survey respondents took
+approximately $1$ to $4$ minutes ($2$ on average) for each topic, as
+discussed ahead in Section \ref{sec:recommendations}.   Thus we
+used LDA to produce $20$ topics.  
+
+
+
+\subsubsection{Labelling of Requirements Topics}
+
+
+
+Once the topics were extracted from the requirements documents we then
+labelled each of the topics to the best of our knowledge by reading the
+top ranked topic words (we kept all topics words) and tried to
+label them using our non-expert domain knowledge.   Only one author,
+the first author, labelled the topics.  We refer to these topics labels
+as
+\emph{non-expert} labels as the first author did partake in the development
+of the project being studied.   Labelling topics was difficult
+as there were many project specific terms that did not have a clear
+definition (such as GAT, setup, and RIL).
+
+The motivation behind labelling topics is that they are time consuming
+to interpret and are faster to reason about if
+labelled.  Furthermore we wished to compare our labels to those of
+domain experts (the relevant developers).
+
+
+\subsection{Version Control Mining}
+
+
+
+To correlate topics and development activity we extracted the change
+log messages from \numprint{650000} version control system commits of a popular
+Microsoft product.   We had approximately 10 years' worth of commits
+from more than \numprint{4 000} unique authors.   Our properties per commit
+consisted of user name, machine name, branch name and the change
+description (also known as the commit log message).
+
+%dump of version control system
+For the FLOSS projects we had to mine a variety projects listed in
+Table \ref{tab:flossdevelopers}.  
+Note that Table \ref{tab:flossdevelopers} names the FLOSS participants
+directly because those participants chose to self-identify; they were
+given the choice of anonymity, project-level anonymity, or full
+identity with attribution.  All of the FLOSS participants chose full
+identity with attribution.
+Those on Google Code tended to use SVN
+so we used \texttt{git-svn}~\footnote{git-svn man page: 
+  \url{https://www.kernel.org/pub/software/scm/git/docs/git-svn.html}}
+to convert SVN to Git.  Git repositories were processed using a custom script,
+\texttt{git-grep.pl}~\footnote{\texttt{git-grep.pl} is located here:
+  \url{https://github.com/abramhindle/gh-lda-extractor}} that extracted
+the commits into a common JSON~\footnote{JSON Definition: \url{http://JSON.org}} format.
+
+
+\subsection{Issue Tracker Topic Mining}
+\label{sec:issue tracker mining}
+
+We mined issue trackers of both
+Github~\footnote{Github Issue Extractor: \url{https://github.com/abramhindle/github-issues-to-json}}
+and Google
+Code~\footnote{Google Code Issue Extractor: \url{https://github.com/abramhindle/google-code-bug-tracker-downloader}}
+using our own issue tracker mining programs.
+
+We extracted their issues and the comments associated with the issues
+and converted them into a custom, but common schema in a JSON format.
+
+%\subsection{Issue Tracker Topic Mining}
+%\label{sec:issue tracker mining}
+
+To extract LDA topics from issues extracted from Google Code or Github
+we followed much of the same methodology in Section
+\ref{sec:requirementstopicmining}.
+
+Much like in Section  \ref{sec:requirementstopicmining} we removed
+stop words from the texts (for the stop words used please see
+Footnote \ref{fn:stop} in Section \ref{sec:requirementstopicmining}).  We were not able use
+the same stemmer for this system so we did not stem the issues at
+all.  There was no identifier splitting applied either.  Also the
+texts were composed of the author, owner, subject and bodies of an entire
+issue, joined into a single document concatenated with the author and
+comment bodies of the associated issue comments (the discussion of the
+issue in the issue tracker).  
+This is because the requirements contained similar information about
+authorship in-lined in their texts.  Since users and developers could get into the industrial
+topics we thought it was necessary to emulate requirements documents
+by including authorship information.
+These documents were tokenized and fed
+into LDA.  We did not filter out any issue tracker documents.
+
+We used a different implementation of LDA for the FLOSS issue tracker
+study, Vowpal Wabbit.~\footnote{Vowpal Wabbit: 
+  \url{https://github.com/JohnLangford/vowpal_wabbit/wiki}} The source
+code for the FLOSS issue tracker part of the study can be found
+on-line\footnote{Our Github LDA Extractor: \url{https://github.com/abramhindle/gh-lda-extractor}} (Vowpal
+Wabbit is required).
+
+
+%Since we were mining many projects 
+$209$ projects were extracted, and $13$
+eventually used; many of which were small.  To maintain consistency
+with the industrial case study the same number of topics were
+extracted, $n = 20$.
+The minimum requirement of a project was that it needed
+at least $20$ issues in order to provide enough data to make topics from.  
+%consistent with our industrial investigation and keep the number of
+%topics extracted, $n$, to $20$ topics.  
+Vowpal Wabbit (VW) was configured with LDA hyper-parameters $\alpha =
+0.1$, $\beta = 0.1$, and $2$ online iterations.  VW uses an online
+algorithm for LDA, thus iterations are done in batches.   Vowpal Wabbit
+uses a variational Bayes LDA algorithm~\cite{hoffman2010online}.
+Figure \ref{fig:crafttopicplot} shows the results of extracting and
+plotting topics of Craft.NET.
+
+
+\subsection{Relating Requirements Topics to Commits}
+
+%XXX reread this section
+
+\label{sec:relatingreqs}
+
+To relate commits to requirements topics we used LDA inference.
+%to exploit our
+%extracted requirements topics and relate them to new documents:
+%commits.  
+LDA inference is similar to how LDA trains and learns topics
+except it does not learn from this inference --- it relates documents
+to pre-existing topics. This allows us to reuse the existing
+requirements topics. LDA inference takes topics and documents as
+input and produces a new topic-document matrix (see Section \ref{sec:lda}) that represents the
+association of a document (a commit message in our context) to each of
+the $20$ topics we had already extracted from requirements.  LDA
+inference allows us to relate existing topics to new documents without
+modifying the existing topics. A new topic-document matrix is created
+that describes this topic-document inference.  The LDA inference
+technique was previously used by Lukins et al.~\cite{Lukins2008} to
+query bug reports.
+
+
+In order to relate commits to requirements topics that were already
+generated, we had to convert the requirements topics to word
+distributions and then infer the relationship between their word
+distribution and the topic word distribution via LDA inference, rather
+than rerunning LDA to produce new topics. Thus we tokenized the commit
+log message of each commit and produced a word distribution per
+commit.
+%Commits that were empty were ignored.
+We treated these documents in the same manner as the requirements
+documents: we removed stop words, stemmed the terms with a custom
+Porter stemmer, and used the intersection of the vocabulary  shared by the requirements documents and
+topics. We intersected the commit and requirements vocabulary because we were using LDA inference
+and thus were not learning new topic words.
+We did not split words, or split identifiers, as
+we were worried about adding semantics or removing semantics since
+these topics might be interpreted by experts.  The commits were not
+filtered by the quality or length of their commit messages.
+
+%\subsubsection{LDA Inference}
+
+Thus we intersected each commit's words by the words in our topics and
+then inferred (via \emph{LDA inference}) the relationship between the
+requirements topics and the changes over time.  We inferred the topics
+related to each change, leaving us with a topic-document matrix of
+changes associated with topics. Figure \ref{fig:model} depicts this
+relationship between the version control system, LDA topics and the
+requirements documents.
+Topics are extracted from and
+related to requirements documents and then the relationship between
+topics and commits is inferred.  
+We did not train on the commits because our goal is to use topics
+that were requirements relevant. 
+Also, inference allows for fewer
+topic updates as requirements updates are less frequent than commits.
+This 
+can allow us to plot time-series of commits that are relevant to topics.
+In Section \ref{sec:topic plots}, after the next section, we discuss how this matrix allows us to plot the
+relationship over time between requirements topics and commits. In the
+next section we discuss how apply this methodology to issue tracker topics.
+
+
+%Our inferred documents were the version
+%control system commit messages of an entire product history.
+%We had approximately 10 years' worth of commits (650k
+%commits) from more than 4000 unique authors. 
+
+\subsection{Relating Issue Tracker Topics to Commits}
+
+
+
+To relate issue tracker topics to commit we follow the same methodology as
+Section \ref{sec:relatingreqs} except our LDA corpus extracted from an
+issue tracker instead. In error we failed to apply stemming to relate issue
+tracker commits to issue tracker issues, and this was not correctable as
+the surveys had already been sent. The inference is exactly the
+same except we use Vowpal Wabbit for the LDA inference implementation
+and we did not stem words.   To remain consistent
+with the industrial case study $20$ topics were used, except $20$
+topics were extracted from each of the $13$ FLOSS project's issue
+tracker. Extraction of issue reports is described in Section
+\ref{sec:issue tracker mining}. Commits were not filtered based on the
+length of the commit log message or the quality of the commit log
+message.
+
+
+
+\subsection{Topic-Plots of Effort Relevant to Topics of Requirements}
+
+
+\label{sec:topic plots}
+
+\begin{figure}
+  \centering
+\includegraphics[width=1\textwidth]{figures/example}
+\caption{Personal topic from 1 industrial developer. Topics and Relevant revisions over time. X axis is time, Y axis
+is the average relevance per time window (greater is more relevant). The topic
+label provided is a non-expert label created by the authors.}
+  \label{fig:examplepersonal}
+\end{figure}
+
+In order to communicate the effort that was associated with a
+requirements topic and the related requirements documents, ones has to
+present summaries of this effort to the users. We used a time-line overview, a
+topic-plot (see Figure \ref{fig:topicplot}) that shows the relevant
+commits over time.  We also utilize our non-expert topic labels to
+label these plots as shown in Figures \ref{fig:topicplot} and
+\ref{fig:examplepersonal}.  These topic-plots can be generated at
+various levels of granularity: entire projects, entire teams, or
+individual developers.  Using one single global analysis we can select
+subsets of
+the commits by attributes such as time, topic, author, or
+team in order to produce more localized topic relevance plots.
+In particular we found that developers were more likely to remember
+their own effort thus we produced topic-plots based solely on their
+own commits; we called these plots \emph{personal topic-plots}. Figure
+\ref{fig:examplepersonal} is an example of  one of these
+personal topic-plots.
+  These
+topic-plots are appropriate representations as they provide
+stakeholders with an overview of topic relevant effort and would be a
+welcome addition to a project dashboard.
+
+In this study we assume that commits are a reasonable proxy for
+effort. We recognize that commits could actually be months of work,
+expressed as 1 sole commit, or many commits could be created in the
+same hour. Thus we look to the prior work of Koch et al.~\cite{koch2008effort}
+and Capiluppi et al.~\cite{capiluppi2013effort} who argue and provide
+evidence that commits are correlated with project activity and are both
+related and correlated with development effort.  We argue that the
+topic relevance of a commit is relevant to the effort related to that
+topic and the associated documents that the topic was extracted
+from. While it might not be an exact measure, a strong relevance would
+indicate that potentially similar concepts are being expressed in the
+commit comments that are relevant to the topic at hand. Thus we argue
+that not only are commits relevant to effort, but that topic relevant
+commits indicate topic relevant effort.
+
+% NOTE: might be redundant can cut later
+Note that a single commit can be associated with multiple
+topics~\cite{Grant:2010}.  Figure \ref{fig:topicplot} shows a
+topic-plot of $20$ topics that show the focus on these topics by
+average commit relevance over time. We put the commits into bins of
+equal lengths of time and then plot their average relevance (a larger
+value is more relevant) to that topic.  Bins will be of an equal
+length of time (such as $7$ days) and thus they will not be
+equal size in terms of the number of commits. Some bins will have few
+or $0$ commits, some will have $10$s to $100$s of commits depending on
+the project and how busy development was at that time.  Then for the
+commits within a bin, their topic-document relevance 
+values from the topic-document matrix, extracted by LDA inference,
+will be averaged together. The average relevancy of $0$ commits is set to
+$0$.
+
+Note that ------ indicates a redaction, within this study we redacted
+some tokens and words that would disclose proprietary
+information. This is the long dash that is featured in Figure
+\ref{fig:topicplot}. Within this figure we can see distinct behaviours
+such as certain topics increasing or decreasing in importance.
+
+The figures produced are interesting but we have to evaluate if they
+are representative of the developer's perception of their relevant
+behaviour.
+
+\subsection{Topic-Plots of Effort Relevant to Issue Tracker Topics}
+
+For the Issue Tracker Topic-Plots we followed a similar methodology to
+the previous Section \ref{sec:topic plots}. But we executed this
+methodology per each project and per each author of that project.
+
+Figure \ref{fig:crafttopicplot} shows the topic-plots of Craft.NET,
+while Figures \ref{fig:flosstopicplots1} and
+\ref{fig:flosstopicplots2} show the topic-plots given to 13 different
+FLOSS developers on 13 different FLOSS projects.
+
+
+\subsection{Qualitative Evaluation}
+
+
+
+Our goal is to determine the utility of the global revision topic-plots
+and the personal topic-plots (e.g. Figure \ref{fig:examplepersonal}). Thus we interviewed relevant
+stakeholders and developed a survey. Our interviews and surveys were
+designed using methodologies primarily from Ko et al.~\cite{Ko2007}
+and those described by the empirical software engineering research
+of Shull et al.~\cite{Shull2010} and Wohlin et
+al.~\cite{Wohlin2000}, regarding interviews, surveys and limited study
+sizes.
+
+
+
+\subsubsection{Microsoft PM and Developer Interviews}
+
+
+Our goal is to determine if  labelled topics are relevant to
+developers and program managers (PMs), all of whom are development
+engineers. 
+Our first study occurred at Microsoft and thus the initial interviews
+were with Microsoft employees.
+Relevance to a developer is subjective, but we define it as ``the
+developer worked on a task that had at least a portion of it described
+by the topic''.  We scheduled and interviewed 1 PM and 1 developer for
+ 1 hour each.  During the interviews with PMs and developers
+we asked if the topic-plots of the 20 requirements topics were
+relevant to developers and PMs.
+We did not provide our labels to the PMs and developers until after
+they had provided labellings.
+ We also asked, ``Are they surprised by
+the results?'' and, ``Can they identify any of the behaviours in the
+graphs?'' We then summarized the comments and observations from these
+interviews and used them to design the survey, discussed in the next
+section.
+
+
+\subsubsection{Microsoft Developer Survey}
+
+\label{sec:msdevsurvey}
+
+%DEVELOPED A SURVEY
+
+%\subsection{Structured Qualitative Validation}
+To gain reliable evidence about the utility of requirements topics and
+topic-plots, we produced a survey to be administered to developers,
+that asked developers to label topics and to indicate if a
+personalized plot of their behaviour matched their perception of their
+own effort that was related to that topic and its keywords. We analyze
+these results in the Section \ref{sec:surveys}.
+
+The survey asked developers to label three randomly chosen topics,
+evaluate the three personal topic-plots of these topics, and to comment about
+the utility of the approach. Each of the topic labelling questions
+presented an unlabelled topic with its top $20$ words and asked the
+respondents to label the topic. Another question asked if this topic was relevant to the
+product they worked on.  They were then asked to look at a
+personal topic-plot and see if the plot matched their perception of
+the effort they put in.  Finally they were asked if these plots or
+techniques would be useful to them.  The surveys were built by
+selecting the developer's commits and randomly selecting topics that
+the developer had submitted code to. Three topics were randomly chosen
+for labelling and these topics were ordered randomly in an attempt to
+limit ordering effects.
+
+Initially, we randomly selected 35 team members 
+who had committed changes within the last year and had over 100
+revisions. We sent these developers an email survey. After only 4 developers
+responded we switched to manually administering surveys. We repeated
+the previous methodology for choosing participants and chose 15
+candidates, 8 of whom agreed to be administered the survey.
+Administering the surveys in person would reduce training issues and
+allow us to observe more. The administered surveys included an example topic
+question, used for training, where we verbally explained how the topics were extracted and
+how the commit messages were analyzed during the in-person
+administration of the survey. We then walked them through this example,
+reading the topic words out loud and thinking out loud.  
+We provided a concrete example and abstract explanation to increase
+survey success or completion.
+
+Surveys were administered by the first two authors, the first
+author spoke aloud each question to the respondents in order
+for their answers to conform to the survey. An example of a
+labelling that perceptually matched was when a respondent
+% Verify if it is topic 8
+gave the label ``Design/architecture words'' to the following Topic 8
+(seen in the 2nd column of the 4th row of Figure \ref{fig:topicplot}):
+
+\begin{center}
+\emph{component set policy context service mode high ------
+14 track structure check type hresult feature gat ap
+follow data dynamic.}
+\end{center}
+
+Later, similar surveys were produced for FLOSS developers.
+
+\subsubsection{FLOSS Developer Survey}
+
+We sought to replicate the Microsoft case study, described in 
+Section \ref{sec:msdevsurvey}, that was executed on industrial
+participants, on FLOSS Developers.
+
+The FLOSS survey was meant to be shorter than the MS survey since the
+FLOSS survey had a lengthy consent form attached to it. Much like the
+original survey the FLOSS developer survey asked developers to label
+three randomly chosen topics, determine if these topics were relevant
+to their project, and evaluate if three personal issue tracker
+topic-plots presented matched their perception, and then they were
+asked to comment about why or not the plot did not match their
+perception. 
+We did not replicate one set of questions: we did not ask FLOSS
+developers about the utility of the plots in the survey because we
+assumed that we would have a higher rate of interview participation
+and thus we could go beyond just yes/no answers.  
+Furthermore we needed
+to keep the time to fill out the survey low due to the lengthy consent
+form.
+We found in the
+Microsoft study that a simple yes/no question was probably
+oversimplifying the response of the survey participants.
+%
+%if they would use this tool because we assumed that we would get
+%enough interviews such that this value would be evident in the
+%interviews.
+
+These surveys were built by selecting the FLOSS developer's commits
+and randomly selecting topics that the developer had submitted code
+to. Three topics were randomly chosen for labelling from $20$
+generated topics for their project. These topics were ordered
+randomly in an attempt to limit ordering effects if there were any.
+
+The surveys were uploaded to a website, and later we added the surveys
+to Google Drive. We uploaded an HTML survey, an open document survey
+(LibreOffice/OpenOffice), a DOC file survey (Microsoft Word), a PDF survey, and
+sometimes a Google Doc survey. Each of these surveys were
+identical. Our hope was to be as convenient as possible for the
+respondents, some respondents mentioned that Google Docs was the most
+convenient. For the other file types the respondents would email back
+the modified files. We did not send HTML email to the FLOSS developers
+because there is some backlash in the FLOSS community against HTML email.
+
+To find FLOSS developers we started by browsing Google Code and finding
+projects that were used but not exceptionally busy and popular. We
+then extracted their issue tracker and commits. Surveys and suggested
+emails were generated by an email/survey generator script and
+we emailed many of these off.
+After receiving limited response from the developers of Google Code projects we
+switched to Github projects.
+We then decided to approach developers more directly using real-time chat.
+
+Our recruitment strategy was to join Freenode~\footnote{FreeNode: 
+  \url{http://freenode.org}}, a popular Opensource Internet Relay Chat
+(IRC) network, and look for channels that advertised Github
+repositories.  Channels can advertise a repository by having the URL
+to the repository in their channel topic (e.g, the project github3.py
+had a channel topic of ``https://github.com/sigmavirus24/github3.py current version: 0.5 $||$ http://developer.github.com/v3/ $||$ http://github3py.rtfd.org/''). We browsed the Freenode
+channels using the \texttt{/LIST} command in IRSSI~\footnote{IRSSI IRC
+  Client: \url{http://irssi.org/}}. 
+Then we filtered
+the channels by those that had Github URLs in them.  If their Github
+project had over $20$ issues in the Github Issue Tracker and more than $3$
+months of development in the Github git repository we would enter the
+channel, announce that we have extracted the topics of their project
+and paste a hyperlink to a gallery of the extracted global issue tracker
+topic-plots.  We selected the channels by number of participants and
+in alphabetical order. We started with the lowest number of
+participants first as we expected the idle participant would probably
+be a developer for that project. Thus for each channel we joined, we
+had already mirrored their issue tracker and git repository, and
+extracted the issue tracker comments and pre-generated all the surveys
+for all the developers in the project's git repository.
+
+We would target the known developers in the IRC channel by prefixing
+our gallery URL with their nicknames (e.g, ``devname: hello! I've
+plotted the issue topic of your repository at: URL'').  Then if a
+developer responded we would engage them in conversation and ask if
+they would interested in taking part in our survey. Of these Freenode
+developers, about 11 positively responded.
+
+In total we had sent out $156$ emails, this included the emails to the
+Freenode based developers. We had already extracted and generated
+surveys for $209$ different projects. We received $13$ responses. Our
+response rate overall was $12\%$, much lower than our Microsoft
+response rate but we had less developers per project to choose
+from. We found that the direct developer engagement resulted in more
+respondents. Some developers mention they had been contacted before by
+other researchers.
+Developers who responded, and their corresponding FLOSS projects, which
+had issues and commits, are listed in Table \ref{tab:flossdevelopers}.
+Once the surveys were collected we summarized the results.
+
+\input{flossdevs.tex}
+
+% \begin{itemize}
+% \item sent out over 156 emails
+% \item 13 responses whether by freenode or email
+% \item 12 were from freenode
+% \item went into the channel and saw if any devs were there
+% \item courted the devs and presented them with a topic-plot of their
+%   project
+% \item Asked if they'd take a survey.
+% \item emailed a survey , sometimes included the survey on google docs
+% \end{itemize}
+
+
+
+\subsection{Summarizing the results}
+
+
+
+After the surveys were administered we discussed the results with each
+other, analyzed the data and collated our observations about the topic
+labelling, topic interpretation and if the topic-plots matched
+the developers' perception of effort. Figures
+\ref{fig:flosstopicplots1} and \ref{fig:flosstopicplots2}
+depict the issue report topic-plots from the FLOSS developers, while Figure
+\ref{fig:topicplot} shows the requirements topic-plots of the
+Microsoft product that  we studied. In the next sections we discuss the
+results of these interviews and surveys.
+
+
+
+\section{Topics of Requirements, Issues and Topic-Plots}
+
+% %XXX fix
+% Within this section we investigate the requirements topics and the
+% effort commits effort that are relevant to these topics.  
+
+
+
+% We will describe how we process
+% requirements and then produce topic-plots of topic-relevant effort
+% over time that were used in our validation with developers and
+% managers.
+
+
+%\subsection{Topic-Plots of Requirements Relevant Effort}
+
+
+
+We argue that leveraging these topics provides some traceability
+between requirements documents and the commits themselves. When one
+combines these links into a topic-plot (Figure \ref{fig:topicplot})
+one gains a powerful high-level overview of the effort that is
+relevant to certain requirements.
+
+Figure \ref{fig:topicplot} depicts a set of topic-plots based on the
+$20$ requirements topics that we extracted, and manually labelled,
+from the large Microsoft project that we studied.  What is important
+about this style of plot is that it provides an overview of the per
+topic focus of effort during an entire system's lifetime.  One can
+observe the evolution of how efforts are focused on different kinds of
+requirements topics at different times in the system.
+
+The data being processing is large and cumbersome, yet such a simple
+plot can provide insights into a project.  For instance, the 6th topic
+(3 down, right most), in Figure \ref{fig:topicplot} shows a lack of
+behaviour for the first 7 years followed by a distinct and constant
+increase in focus and importance.  In Section \ref{sec:pm} an
+interview with a program manager reveals that the spikes in the
+topic-plots 7 and 9 are relevant to actual changes (topic-plots 7 and
+9, 4th and 5th rows in the first column of Figure \ref{fig:topicplot}).  Another example of
+interesting behaviour includes the use cases and testing topics (8th
+and 10th topics, 4th and 5th in the second column) became less important,
+information that would be useful to a manager.
+
+
+Figure \ref{fig:topicplot}  is a global plot; while relevant to
+managers it might not be relevant to individual developers.
+%that includes all commits
+%in the project and is useful for high level managers, 
+Developers could be more interested in
+ fine-grained and local information about themselves, their teammates
+ and their entire team. Example fine-grained and local topic-plots
+ are depicted in  Figure \ref{fig:personal} which shows the
+topic-plots of 2 developers drawn only from commits made
+by those developers.
+% Teams were derived using Microsoft's internal organization charts at
+% the time of the study.
+By examining Figure \ref{fig:personal}, we observe that the
+developers' behaviour with respect to a particular topic does indeed
+change over time, and each developer exhibits a different focus.
+Plots like Figure \ref{fig:personal}
+illustrate that different authors' focus evolves over time.
+
+% We found this was indeed the case by clustering similar
+% developers, but these plots allow us to see where behaviour correlates
+% and where it does not.
+
+Analysis of groups of developer via topic-plots is possible. Figure
+\ref{fig:team} depicts different teams (developers with the same
+manager) rather than different authors.  These plots can be generated
+based on the work of multiple authors or an organization, in this case
+we leveraged the organizational knowledge of teams (who manages
+who). This allows the attribution of effort relevant to requirements
+topics to teams.  For Topic \emph{testing, metrics and milestones} in
+Figure \ref{fig:team}, the trend was similar but the behaviour was
+not. This manager level view provides a summary of a team's
+development effort and allows one to compare teams and see the
+behaviour relevant to that team.
+
+In summary, we can track commits related to topics extracted from
+requirements over time. We are able to extract and plot global topic-plots
+depicting global trends, and produce local topic-plots of teams and
+developers that can be used to investigate more personally relevant
+and local trends.  This information can help provide feedback to a
+manager who could augment their project dashboard with these
+topic-plots in order to observe global trends, personal trends or
+team-wise trends within these plots. The potential for dashboard use
+was later confirmed in interviews with a program managers (see Section
+\ref{sec:pm}).
+
+\begin{figure*}
+  \centering
+\subfloat[topic-plots of 2 developers]{\label{fig:personal}
+\hspace{-2em}\includegraphics[width=1.2\textwidth]{figures/personal}
+%\caption{topic-plots of 2 topics for 2 different developers}  
+}
+
+%\begin{figure*}
+%  \centering
+\subfloat[topic-plots of 2 teams]{\label{fig:team}
+\hspace{-2em}\includegraphics[width=1.2\textwidth]{figures/team}
+%\caption{topic-plots of 2 topics for 2 different developers}  
+}
+\label{fig:teampersonal}
+\caption{Topic-plots of 2 topics for 2 different developers and
+  teams. The topic labels provided are our non-expert labels.
+The topic labels shown are non-expert labels.}
+\end{figure*}
+
+In the next section we discuss the results of the surveys and
+interviews and the perceptions that developers and managers hold
+regarding these topic-plots.
+
+% \begin{figure*}
+%   \centering
+% \includegraphics[width=0.9\textwidth]{figures/team}
+% \caption{topic-plots of 2 topics for 2 teams under different managers.}  
+% \label{fig:team}
+% \end{figure*}
+
+
+\section{Qualitative Evaluation}
+
+
+
+In this section we validate  if  developers and managers were
+able to label topics and if the topic-plots matched their perception
+of the effort that occurred relevant to that topic and its associated
+requirements.
+
+
+\subsection{Interviews}
+
+
+Initially, we needed to understand requirements use at Microsoft. Thus
+our initial interviews helped direct the rest of the study. We
+interviewed one program manager and one developer for one hour
+each. The interviewees were chosen specifically because they had
+participated in writing the requirements documents that we had access
+to. Later during the FLOSS extension of the Microsoft study we
+interviewed 5 developers over Skype, and IRC. In the following
+sections we discuss interviews with a program manager and a developer
+at Microsoft in 2011, and then we summarize the interviews with FLOSS
+developers in 2013.
+
+\subsubsection{An Interview with a Program Manager}
+
+
+
+\label{sec:pm}
+
+We interviewed a program manager at Microsoft and asked him to
+label 3 topics. He walked through each topic word by word
+and pieced together what he thought the topic was about.
+Program managers often write requirements and he
+immediately indicated the relationship of topics to
+requirements,``I know which specs this came from''. %maybe topic 4
+
+The program manager also indicated that a series of
+correlated spikes were most likely caused by a \emph{Design
+Change Request} (DCR), shown in the topics 7 and 9 (first column on
+the 4th and 5th row of Figure \ref{fig:topicplot}). DCRs are management decisions
+about implementation. They are caused by
+management wanting a particular change or by external
+stakeholders, such as vendors, imposing limitations or
+requirements on certain product features. The particular peak
+he indicated had to do with bluetooth support.
+
+After the initial topics were labelled the PM voluntarily help label
+some more topics.
+When shown a topic-plot (topic 3, 1st column, 2nd row of Figure \ref{fig:topicplot}) of a feature that he knew about, the program
+manager pointed to a dip and mentioned that the feature was shelved at
+that time only to be revived later, which he illustrated as the
+commits dipped for a period and then increased. This indicated that
+his perception of the topic and topic-plot matched reality: many of
+the labelled topic-plots mapped to the perception of the program
+manager. This match between topic and topic-plot is important because
+the topic-plot might not depict the relevant effort related to the
+topic or the label given to that topic.
+
+The program manager expressed interest in the research
+and suggested it would be useful in a project dashboard. He
+additionally suggested that he would like to be able to ``drill
+down'' and see related documents.
+We then interviewed a developer to see if their view of the project differed.
+
+\subsubsection{An Interview with a Developer who Writes
+Requirements and Design Documents}
+
+
+
+The Microsoft developer we interviewed had written design
+documents based on the requirements document. At first he
+seemed apprehensive about labelling topics, potentially due to
+the unstructured nature of the task. We had him successfully
+label the 3 topics that the program manager had labelled. The
+developer labels correlated (contained similar words and
+concepts verified by the paper authors) with the program
+manager as well as our non-expert labels.
+Some topics were relevant to concepts and features he
+had worked on. 
+The developer quickly recognized them and
+explained to us what the topic and those features were
+actually about. 
+
+The developer also mentioned that some
+topics were more cohesive and less general than others.
+Since the developer had made commits to the project's
+source code, we were able to present him with a personal
+view of his commits across the topics. The developer
+expressed that this personal view was far more relevant to
+him than a global view. The developer also agreed that for 2
+of the 3 topic-plots, which the developer had labelled, we presented, the plots were accurate and
+clearly displayed the effort he put into them at different
+times.  
+When asked about the usefulness of this approach, the
+developer indicated that it was not useful for himself but
+might be for managers.
+
+Our preliminary conclusions from the interview were that developers could label topics
+with some prompting, but were far more comfortable dealing with topics
+relevant to their own code. The developers preferred topic-plots
+relevant to themselves over plots about entire project and could pick
+out and confirm their own behaviour. Whether or not this would be
+evident in the surveys remained to be seen.
+
+\subsection{Survey Responses}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\textwidth]{figures/subfig3}
+  \caption{Issue Report Topic-Plots presented to FLOSS
+    Developers. Each shows the topic-plots that developers were
+    asked to label in the survey in no particular order. See figure
+    \ref{fig:flosstopicplots2} for more.
+Red dashed lines indicate a release or
+  milestone of importance (major or minor).
+The topic labels shown are the top ranked LDA topic words.
+}
+  \label{fig:flosstopicplots1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\textwidth]{figures/subfig4}
+  \caption{Issue Report Topic-Plots presented to FLOSS
+    Developers. Each shows the 2 to 3 topic-plots that developers were
+    asked to label in the survey in no particular order.
+See figure
+    \ref{fig:flosstopicplots1} for more.
+Red dashed lines indicate a release or
+  milestone of importance (major or minor).
+The topic labels shown are the top ranked LDA topic words.
+}
+  \label{fig:flosstopicplots2}
+\end{figure}
+
+
+
+\label{sec:surveys}
+
+In this section we discuss the survey responses for both Microsoft
+managers and developers, and FLOSS developers.
+
+We administered surveys over email, over IRC, once over Skype,
+and in person. 
+The surveys at Microsoft occurred during the last Summer and early
+Fall of 2011, the FLOSS surveys occurred during February and March 2013.
+In IRC and person surveys
+were favoured due to low response from the email survey.
+IRC surveys are surveys where we chatted with the developer and then
+asked if we could send them an email survey. One developer requested
+voice administration of the survey, and so we talked with that
+developer over Skype.
+One email respondent expressed difficulty interpreting the topic-plots
+but did associate the behaviour with their own experience:
+% NOTE: change to `` to get more space
+\begin{quotation}
+Again, all my projects only lasted about 2-3 months --- the
+closest thing that made sense in the topics listed is the USB
+and video work I did, which was done in June-Aug, possibly
+coinciding with the last spike.
+\end{quotation}
+
+Our observation from some of the surveys was that some raw,
+unprocessed LDA topics were far too complicated to be interpreted
+without the training provided by our example topic that we labelled in
+front of the respondent.
+For example one respondent described 
+Topic 6 in Table \ref{tab:topiclabels} as:
+\begin{quotation}
+These seem pretty random. The words from the topic that
+actually come close to identifying something in my work
+area are ``device update'' and ``connection''.
+\end{quotation}
+
+As the surveys used personalized plots, such as the plots in Figures
+\ref{fig:examplepersonal} and \ref{fig:personal}, we gained insight on the perception of
+the respondent if their plot matched their perceived effort. The
+respondent of this plot said that some of the plot matched his
+architectural work that he had concluded that labelling is a difficult
+activity.
+The respondent also said that the peaks were in sync with the changes that
+he had made. In the two other topic-plots he could not recognize any
+behaviour. Thus some of the topic-plots match his perception, but not
+all topic-plots were relevant.
+
+
+FLOSS developers were given personal topics plots as well. All of the
+personal topic-plots of the FLOSS developer topics are depicted in
+Figures \ref{fig:flosstopicplots1} and \ref{fig:flosstopicplots2}.
+
+
+Some respondents
+found that part of the plots presented to them matched their behaviour
+while other parts of the same plots did not. ``I would have expected
+more activity,'' said one Microsoft participant about a topic that was related to
+client server interactions.
+FLOSS developers, such as Gerson Goulart and Julian Harty, expressed some doubt:
+\begin{quotation}
+  I do recognize that I put some small work in this project at the
+  beginning and a bit more on it some time later on, but the dates and
+  plot alone are not enough for me to be confident about how much work
+  was put into each of the topics (which I don't know either from the
+  top of my mind). But a combined plot with different colours
+  labelling each topic could certainly help with that. 
+
+-- Gerson Goulart regarding AURA topic-plots in Figure \ref{fig:flosstopicplots2}.
+\end{quotation}
+\begin{quotation}
+ I recognize my activity varied over the duration of the project; so I would expect peaks and
+troughs. However I don't know what the graph is based on and I've not compared it to my actual activity on the
+project. 
+
+-- Julian Harty regarding Topic 19 of Open Reader in Figure \ref{fig:flosstopicplots1}.
+\end{quotation}
+
+Other FLOSS developers were more positive:
+Ricky Elrod of \texttt{dagd} said, ``I was able to match up some of
+the spikes in this one. Very neat!'' of Topic 14 of dagd in Table \ref{tab:flosstopics}.
+Lisa Milne of \texttt{nodau} said, ``The plot shows the time leading
+up to a release, it quite clearly shows where a release candidate was
+pushed out, followed by the actions taken following feedback from
+users.'' of Topic 3 of nodau in Figure \ref{fig:flosstopicplots1}.
+
+% > v1 <- (c(rep(1,3), rep(2,4), rep(3,3), rep(4,10), rep(5,1)))
+% > average(v1)
+% Error: could not find function "average"
+% > mean(v1)
+% [1] 3.095238
+% > median(v1)
+% [1] 4
+
+The majority of topics were labelled by industrial respondents, and the mode score
+was 4 for agreement (rather than 5 for strongly agree) that the
+topic-plot matched the developer's perception. Figure
+\ref{fig:distribution} displays the scores for the industrial administered
+survey: 3 not applicable, 3 strong disagree, 4 disagree, 3 neutral, 10
+agree and 1 strongly agree. This gives us a median of 4 (agree) and an average of 3.09 (neutral
+to agree) from 21 topic ratings. Disagree versus agree, ignoring
+neutral, had a ratio of 7:11.
+
+% > floss <- c(rep(1,1), rep(2,8), rep(3,10), rep(4,15), rep(5,3))
+% > sum(floss/floss)
+% [1] 37
+% > mean(floss)
+% [1] 3.297297
+% > median(floss)
+% [1] 3
+
+
+The FLOSS developers rated the topic-plots differently: 1 strongly
+disagree, 8 disagree, 10 neutral, 15 agree, and 3 strongly agree. This
+is a median of 3 (netural), an average of 3.30 (neutral to agree), and
+a mode of 4 (agree)
+from 37 ratings. Floss developers also answered that for 6 of 36
+topics that the topics were not relevant to their project or
+development, while 30/36 were (83\%).  Disagree versus agree, ignoring
+neutral had a ratio of 1:2 (9 to 18), and were not statistically different from
+the industrial respondents (7:11) according to a  $X^2$ test ($p >
+0.94$) of \emph{FLOSS Agree} (18) and \emph{FLOSS Disagree} (9) counts versus \emph{Industrial
+Agree} (11) and \emph{Industrial Disagree} (7). The $X^2$ test run was
+the Pearson's Chi-squared test with Yates' continuity correction,
+resulting in 1 degree of freedom and an $X^2$ value of $0.004$.
+
+
+%X-squared = 3.9926, df = 4, p-value = 0.407
+
+
+% resulting in 5 degrees of, an $X^2$ value of 8.7285 and $p > 0.12$
+% X-squared = 3.9926, df = 4, p-value = 0.407
+
+
+ \begin{figure}
+\centering
+\includegraphics[width=.95\textwidth]{figures/combined-dist}
+\caption{Distribution of topic-plot perceptual ratings performed by
+  Industrial Participants (light grey) and FLOSS developers (dark
+  grey).  On this stacked bar-chart, the top number represents the
+  count of Microsoft Developer ratings, the bottom number is the count
+  of ratings from FLOSS developers. The total height indicates how
+  many total ratings combined.}% on two separate modules.}
+\label{fig:distribution}
+\label{fig:flossdistribution}
+
+\end{figure}
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=.7\textwidth]{figures/distribution}
+% \caption{Distribution of topic-plot perceptual ratings
+% performed by Industrial Partcipants}% on two separate modules.}
+% \label{fig:distribution}
+% \end{figure}
+
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=.7\textwidth]{figures/floss-distribution}
+% \caption{Distribution of topic-plot perceptual ratings
+% performed by FLOSS Developers}% on two separate modules.}
+% \label{fig:flossdistribution}
+% \end{figure}
+
+\newcommand{\mybox}[1]{
+\vspace*{0.5em}
+\begin{center}
+\begin{tabular}{|m{3.0in}|}
+\hline 
+\parbox{3.0in}{\vspace{0.2em}
+\centering #1
+\vspace{0.2em}}
+\\
+\hline
+\end{tabular}
+\end{center}
+\vspace*{0.5em}
+
+}
+
+% NOTE: changed it from non-neutral
+\mybox{``This plot matches my perception of the
+effort that went into that topic and/or its features,'' $46-48\%$ of
+topic-plot ratings were in agreement with this statement for both industrial
+and  FLOSS developers
+(see Figure \ref{fig:distribution}).}
+
+After the surveys were administered to FLOSS developers we interviewed
+those who had volunteered for a follow up interview.
+
+% \vspace*{0.5em}
+% \begin{tabular}{|c|}
+% \hline 
+% \parbox{3.0in}{\centering }
+% \\
+% \hline
+% \end{tabular}
+
+
+\subsection{Interviews with FLOSS Developers}
+
+\label{sec:flossinterviews}
+
+We interviewed the FLOSS developers as part of this extension to the
+original study, thus they were interviewed in February and March of
+2013, $1.5$ years after the initial Microsoft Study. The FLOSS
+interviews occurred after they had been administered a survey.
+
+Some of the FLOSS developers who answered our survey agreed to be
+interviewed. We interviewed the FLOSS developers after the Microsoft
+study, thus we focused more on issues of bug/issue report quality
+and topic coherency while talking with FLOSS developers.
+
+In total we interviewed 5 out of 13 FLOSS developers. Most interviews
+with FLOSS developers were executed using textual private messages on
+the FreeNode IRC Network (4 interviews) and one interview used voice
+over Skype (1 interview). The interview language used was English
+although one of the discussions started in French.  IRC private
+messages were beneficial because they were transcribed. The Skype
+interview was recorded via note-taking.
+
+
+% Greer [X] IRC
+% Ian [X] IRC
+% Tobias [X] IRC
+% Boulaine [X] IRC
+% Whiteacre
+
+When we asked FLOSS developers about how they felt labelling topics,
+Bouliane answered, ``I was feeling happy, it's fun to see someone interested in what you're doing.
+But I felt at the same time confused a bit, by what I was suppose to realize by 
+reading the keywords.'' Geoffrey Greer said he felt, ``mostly
+confusion with a little bit of amusement''. Ian Cordasco said that
+topics were easy to label, but the quality of the topic suffered due
+to tokenizing employed, ``When listed in plain text separate from the image
+it was easy. I think the inclusion of punctuation also made it misleading
+because I unconsciously tried to read it as a sentence.''
+Chad Whitacre pointed out punctuation causing issues in Topic 9 of
+ASPEN (2nd row, 2nd column of Figure \ref{fig:flosstopicplots2}), ``Here we've got a username again, and a few cases where punctuation doesn't seem to be
+properly accounted for. The remaining terms don't really call to mind a coherent concept, issue,
+or feature, however.'' 
+Tobias Leich said:
+\begin{quotation}
+Well, it is easy to spot single words and make connections in [my]
+mind [about which] problems/features are meant [by the topic].
+The hard part was to guess what was meant by them [(the words)] together
+because the words [themselves] mean so [many] different things.
+\end{quotation}
+
+% 21:58 <@sigmavirus24> When listed in plain text separate from the image
+% it was easy. I think the
+%                       inclusion of punctuation also made it misleading
+% because I unconciously tried to
+%                       read it as a sentence
+%$:26 <ggreer> mostly confusion with a little bit of amusement
+
+
+% 10:31 < avi_> labelling would giving it a short name
+% 10:33 < acidfu> you mean in your questionnaire ?
+% 10:34 < acidfu> if yes I was feeling happy
+% 10:34 < acidfu> it's fun to see someone interested in what you're doing
+%10:35 < acidfu> but I felt at the same time confused a bit, by what I was suppose to realize by reading the keywords
+% \subsection{Pilot Survey}
+
+% To validate the results of the previous interviews in a
+% more rigorous manner, we employed an email survey. Our
+% email survey was a personalized survey sent to a random
+% sample of 35 of the team members who had committed
+% changes within the last year and had over 100 revisions to
+% the project. Only four responded.
+
+
+
+When asked about the quality of issue reports, FLOSS developers such
+as Nicolas J. Bouliane lamented the lack of training or templates
+given to
+issue reporters. Bouliane suggested that guidelines used by projects
+such as Asterisk\footnote{Asterisk issue tracker guidelines: 
+  \url{https://wiki.asterisk.org/wiki/display/AST/Asterisk+Issue+Guidelines}}
+should be helpfully posted so that issue reporters can understand what
+programmers need.
+
+
+Some FLOSS developers, such as Bouliane of DNDS, could forsee this kind of work being integrated
+into Github, or similar tools, in terms of prediction and effort
+estimation:
+
+\begin{quotation}
+ What I see could be nice
+ is something that can evaluate the velocity of task effort put in[to] a task is fun to know,
+ but then is nice when you can relate that [information] with a task you haven't done yet
+ [in order] to approximate how much time it could take you.
+
+ I guess checking only the past would be easier at first -- this task
+ took you that long , that much effort, that much code, and you need
+ to interfere that much with the existing code.
+
+% 10:15 < avi_> Ok, so a tool that sniffs out what you're currently up to, grabs the past, and perhaps simulates/estimates the effort required?
+% 10:16 < acidfu> well, I guess checking only the past would be easier at first - this task took you that long , that much effort, that much code, and you need to interfere that much with the existing code
+
+\end{quotation}
+
+% 10:13 < avi_> So you use github visualizations, do you think this kind of visualization would useful in github as well
+% 10:13 < acidfu> what I see could be nice
+% 10:14 < acidfu> is something that can evaluate the velocity of task
+% 10:14 < acidfu> effort put in a task is fun to know
+% 10:15 < acidfu> but then is nice when you can relate that with task you haven't done yet
+% 10:15 < acidfu> to approximate how much time it could take you
+% 10:15 < avi_> Ok, so a tool that sniffs out what you're currently up to, grabs the past, and perhaps simulates/estimates the effort required?
+% 10:16 < acidfu> well, I guess checking only the past would be easier at first - this task took you that long , that much effort, that much code, and you need to interfere that much with the existing code
+% %Ok, so a tool that sniffs out what you're currently up to, grabs the past, and perhaps simulates/estimates the effort required?
+
+
+
+
+
+
+
+
+
+\subsection{Did Respondents Agree on Topic Labels?}
+
+
+We wanted to see if respondents labelling the same topic agreed on the
+same labels. Only our industrial study had topic label overlap since we
+never had more than 1 FLOSS developer from 1 project at a time.
+
+In table \ref{tab:topiclabels} we can see a selection of industrial
+topics, their topic words, expert labels and non-expert labels. We can
+see examples of agreement and disagreement, for instance topic 18 we
+can see all of the respondents and interviewees agreed that the topic
+was about setup but whether or not it was a networking device setup or
+application setup was undetermined. We perceived that familiarity of a
+developer the requirements documents relevant to the topic aided their
+ability to label the topic. Topic 15 described in
+\ref{tab:topiclabels} suffered from many experts claiming a lack of
+coherency, while there was some agreement on the topic of
+networking. Topic 15 has some agreement with the non-expert,
+as the redacted term is the same redacted term in the expert labels.
+This table helps illustrate how agreement exists along a gradient that
+is subject to subjectivity. 
+
+One topic, Topic 19 (depicted in Figure \ref{fig:topicplot}) was
+non-expertly labelled ``wifi networks and ------ access points'', had
+agreement between 2 of the respondents. One said: ``Configuration of
+[------ access point]'', the other said ``… but really [it is] [------
+access point]. [In particular], the [user interface] related to
+configuring network broadcast, connectivity and sharing.''
+
+For Topic 5 (in Table \ref{tab:topiclabels}), two of the respondents
+had agreed it was a user scenario ``End user usage pattern'' and
+``Functionality related network mode ------, allowing uses to select
+and their preferred network ------''. We cannot be sure that either
+interpretation is more accurate. This illustrates that there can be
+disagreement in terms of the meaning of a topic.
+
+
+\input{mstopictable.tex}
+%\label{tab:topiclabels}
+
+\section{Discussion}
+
+
+\subsection{Topic Labelling}
+
+
+We have demonstrated that stakeholders can indeed label
+topics. Furthermore we have demonstrated that many of these topics are
+relevant to the task at hand.
+
+
+
+\subsubsection{Developers}
+
+
+
+Developers seemed to express difficulty labelling topics,
+but to be clear, many developers did not write the
+requirements or the design documents, or the issue reports that the topics were
+derived from. We argue that some of the difficulty of
+labelling topics derives from the experience one has
+with the topic's underlying documents.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{figures/refheap}
+\caption{Topic-plot of Topic 4 from \texttt{refheap} with topic words:
+\textsf{pretty works great id close set highlighting it. ahead mongo
+aaelony avoid issue. defined lein2 jquery.hotkeys implement query make
+site}. Red dashed lines indicate a release or
+  milestone of importance (major or minor).
+The topic label shown consists of the top ranked LDA topic words.
+}
+\label{fig:refheap}
+\end{figure}
+
+There was some expression of irrelevance of some of the topics from
+the FLOSS developers. Anthony Grimes of \texttt{refheap} gave 
+ Topic 4, depicted in Figure \ref{fig:refheap}, this label:
+\begin{quotation}
+jquery.hotkeys is from when we were giving refheap keyboard
+shortcuts. Highlighting is probably related to highlighting a line
+number when you click it. The rest are way too vague to be of use.
+\end{quotation}
+
+
+%In the FLOSS Developer survey 
+
+Some FLOSS developers, such as Julian Harty pointed that some topics
+are indeed irrelevant and hard to label, ``The terms you have
+collected are nonsensical and don't really communicate much about the
+project at all.'' Ricky Elrod also noticed that topics, such as Topic 20 shown in Figure \ref{fig:flosstopicplots1}, might be
+relevant to the project, but not exactly useful:
+\begin{quotation}
+/wpe/ refers to a
+url route that an issue referenced, but was never used in the project
+(It was decided against -- we used /ec/ instead). ``duckinator'' and
+``phuzion'' are both usernames of contributors. Relevant to the project,
+but not to the logic of the project.
+\end{quotation}
+
+Table \ref{tab:flosstopics} depicts 1 topic from each participating
+FLOSS Developer. It also shows the associated discussion or label that
+the developer associated with that topic.
+
+\input{topic-table.tex}
+
+
+
+\subsubsection{Managers}
+
+
+
+Managers seemed to have a higher level view of the
+project, as they had the awareness that there were other
+teams and other modules being worked on in parallel. This
+awareness of the requirements documents and other features,
+suggested that topic labelling is easier if practitioners are
+familiar with the concepts. These plots are relevant to
+managers investigating who have to interpret 
+development trends.
+%the incoming data.
+
+One manager actually gave the labelled topics a scope
+ranking: low, medium, or high. This scope related to how
+many teams would be involved, a cross cutting concern
+might have a high or broad scope, while a single team feature
+would be have a low scope. This implies that global
+awareness is more important to a manager than a developer.
+
+
+\subsubsection{Non-Experts}
+
+
+
+We consider ourselves to be experts in software,
+but not experts about the actual products that we studied.
+Thus we relied on the experts to help us label the topics. At
+the same time we also labelled the topics in the industrial case
+study. We examined all of
+the topic labels and checked to see if there was agreement
+between our labellings and theirs. If our label intersected the
+semantics or concepts of another label we manually marked it as a match. Of 46 separate industrial
+labellings (10 labellings from
+interviews, 12 labellings from email, and 24 labellings from face to
+face surveys),
+our labels agreed with the respondents only 23 times.
+
+\mybox{
+Only 50\% of expertly labelled topic labels were
+similar or agreed with the non-expert topic labels.
+}
+
+Furthermore at a per-topic level, the average manual agreement between
+developer expert labels and non-expert labels was agreement with 40\%
+of the labels (the mean of agreement divided by total per topic). See
+Figure \ref{fig:nonexpert} for a chart of non-expert versus expert
+labels in terms of agreement.  This indicates that while non-experts can label these topics,
+there is inherent value in getting domain experts to label the topics.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.9\textwidth]{figures/MS-agreement.pdf}
+  \caption{Agreement between Expert Labels and Non-Expert Labels per
+    each Industrial Requirement Topic. On this stacked bar-chart, the numbers on top of dark grey
+    bars indicate the number of matches (agreement in labels), the numbers on top of light
+    grey bars indicate the number of mismatches (disagreement in
+    labels).}
+  %indicate the
+  %  number of matches or mismatches.}
+  \label{fig:nonexpert}
+\end{figure}
+
+
+\subsection{FLOSS Developers}
+
+All of the FLOSS developers who answered the survey required that
+their contribution be attributed to them. Perhaps this is because most
+FLOSS licenses, including the permissive BSD and MIT licenses, all
+require attribution as one of the main requirements of the
+license. Some of the motivation for participation might have been to
+promote their project to a wider community.
+
+\subsubsection{Did FLOSS Developers differ from Industrial Participants?}
+
+% ChiSQ in tests.R
+
+In order to address the question, ``Did FLOSS Developers differ from
+Industrial Participants?'' we compared the distributions of the two studies shown in Figure
+\ref{fig:distribution} using
+the $X^2$ test (Pearson's Chi-Squared Test). We used both immediate and simulated
+tests $X^2$, and we included and excluded \emph{Not Applicable}
+responses, but all our tests found that the FLOSS Developers and
+Industrial Developers perceptual distributions were
+not statistically significantly different. Our $X^2$ tests had 
+p-values between $0.12$ and $0.44$ described in the next paragraph.
+
+For all of the ratings including ``not applicable'' when we compare
+FLOSS ratings and industrial ratings using Pearson's Chi-squared test
+with 5 degrees of freedom, an $X^2$ value of $8.7285$ and resulting $p > 0.12$,
+which indicates the ratings were similar between groups of
+developers. By excluding ``not applicable'' ratings (because it has 0
+ratings for FLOSS developers) using 
+Pearson's Chi-squared test with 4 degrees of freedom, with an $X^2$ of
+$3.9926$ and a resulting $p > 0.40$, we conclude that the ratings were
+still similar between groups of developers when ``not applicable''
+ratings were excluded. 
+
+Thus the ratings of agreement between FLOSS and industrial
+developers are similar.  With more respondents we might achieve more
+clarity if there is a difference. Thus we conclude we have no
+statistical evidence that the FLOSS developers responded differently
+than the Industrial participants.
+
+
+\subsection{Commit-Topic-Plot}
+
+We found that the per author commit-topic-plots were
+often relevant to the developers. Some higher level topics
+seemed out of touch with the developer's activity. If a plot
+did not match a developer's perception, we perceived that it could be
+due to a
+lack of familiarity with the topic. Perhaps the topic was unclear
+rather than the plot missing efforts that they expected. We worry in
+some cases that developers might
+be matching noise to noise.
+Many industrial respondents indicated that we should talk to the
+team that produced the requirements we used. Some FLOSS respondents
+suggested they did not have much input into the project and were not
+the most relevant people to speak to. This lends
+further evidence that it is easier for those familiar with the
+source requirements to label topics than those who are not as
+closely associated. Since respondents validated the majority
+of the plots as accurate, this provides evidence that the
+results are not spurious.
+
+Many FLOSS developers reported issues with the distance between
+commits or the irrelevance of the topics to their actual work.
+
+\subsection{Why did the Administered and IRC initiated surveys work?}
+
+ The improved response to in person and verbally
+ administered surveys provides evidence to support that the
+ examples we provided and the ability to discuss issues and
+ address uncertainty with the respondents enabled them to
+ better understand what topics were and what labelling topics
+ entailed. Earlier respondents might have been worried
+ about labelling a topic incorrectly, when in fact we sincerely
+ did not know what the topic was about.
+
+ The strategy of presenting a FLOSS developer with the global topic
+ plot of their project could have been interpreted as gift, thus
+ making the receiving developer more amenable to give back in-kind.
+
+\subsection{Issues versus Requirements}
+
+One of the problems with our FLOSS replication of the industrial study
+was that we lacked requirements documents and instead relied on issue
+tracker issues. Issues in some FLOSS projects are potentially the
+closest documents to requirements documents. Sometimes features and
+even user-stories are described in issues. Unfortunately the use of
+issues is not uniform and the categorization of issues is lacking at
+best. Thus the issue tracker will usually contain far more bug reports
+about the software than feature-requests or requirements. This means
+that our analysis of topics of issues takes on a software
+quality/software maintenance perspective that was not apparent in the
+industrial requirements documents.
+
+Furthermore the size of each issue was far smaller than any of the
+requirements documents and the number of issues per project often
+exceeded the number of requirements documents we used. Other
+differences included how we represented the issues to LDA: we
+explicitly provided authorship information as that was part of the
+structure of an issue, and part of the structure of the requirements
+document text. Yet the authorship information for issues is not
+embedded in the subject or description of the issue, thus to simulate
+requirements we prefixed the issue author to the issue documents we
+fed into LDA.
+
+The language and structure of the requirements documents was dictated
+by a requirements document template. Issues have no such template and
+are often free-form save for some categorical features such as
+severity or module affected. This difference could cause LDA to produce
+template-related topics for the requirements documents.
+
+\section{Recommendations on the Use of Topic Analysis in Software
+  Engineering}
+
+\label{sec:recommendations}
+
+Based on our experience, the discussions we had with
+respondents and the results of our surveys we have compiled
+general recommendations for the use of topic analysis
+techniques in software engineering.
+
+Many found that labelling a set of \emph{personally relevant
+topics are easier to interpret}. Respondents found that topics
+about familiar artifacts tended to be easier to label. One
+should use the most specific domain experts to label topics.
+For optimal results, the team responsible for the
+requirements should label those topics.
+
+\emph{Remove confusing, irrelevant and duplicated topics}.
+Some topics do not actually say anything. Some are
+structural and filled with common terms, some are about the
+use of language itself and not relevant to requirements. Most
+importantly, not all topics need to be shown.
+
+\emph{Use domain experts to label topics!} 
+We found that non-experts have questionable labelling accuracy (only 50\%, with
+a confidence interval of 35\% - 65\%). Respondents with the
+most familiarity gave the most relevant topic labels.
+
+\emph{Unlabelled topics are not enough!} It took respondents 1 to
+4 minutes to interpret a topic from its top topic words.
+Thus multiple topics multiply the cost of 
+interpretation.
+
+\emph{Tokenization matters!} Depending on the source text, how
+tokens are kept or not matter. Splitting on punctuation naively can
+harm accented words and hamper the interpretation of a topic.
+
+\emph{Relationships are safer than content!} The relationships
+between documents and topics extracted by LDA are much safer to rely
+upon than the content of the topic. The content of the topic can be
+interpreted many different ways and LDA does not look for the same
+patterns that people do. Focusing on relationships between topics and
+documents avoids errors in topic interpretation and attribution.
+
+\emph{SE researchers should be careful about interpreting topics!}
+Repeatedly in this study we found that small innocuous words and
+acronyms often had important project specific meanings that were only
+clarified by the developers themselves.
+
+\emph{Topics linked to effort can provide some form of overview!}
+Based on the results of the original study and its replication we feel
+confident that topics can be leveraged for the purposes of overview,
+summary, and dashboard visualization.
+
+
+\section{Threats to Validity}
+
+
+
+Relevant \emph{construct validity} threats include the fact we
+used only one large project and 13 smaller projects and that personal topic-plots are
+relevant only to a single person. We were able to partially
+mitigate this thread by evaluating with multiple people and multiple
+FLOSS projects.
+However, the largest threat facing the construct validity of
+this work is that we did not have enough respondents. Thus
+we need to rely on qualitative evidence. 
+Our surveys showed
+topics in a random order to avoid order bias. 
+Training and verbal administration of surveys can also bias results.
+ Although we
+ administered the survey from a script, the fact that we did so
+ verbally and answered questions about our methodology
+ could introduce bias.
+Showing FLOSS developers a preview of their project in the IRC channel
+could have biased their results.
+Commits evaluated were not filtered if they had a small number of
+tokens which could lead to low quality topics.
+Furthermore we rely on LDA topic relevance to associate commits with
+topics and thus assign effort to topics: construct validity is
+potentially weakened by the use of commits as a proxy for effort.
+
+
+In terms of \emph{internal validity}, we built explanations and
+theories based on the feedback we received from
+respondents. 
+%We pattern matched across respondent
+%feedback. 
+Since we lacked a large number of respondents we were not able to do
+statistical analysis, but Ko et al. have argued that this size of
+result is still relevant~\cite{Ko2007} qualitatively, as we observed
+repeated answers.  Some inconsistency could arise from our use of two
+different LDA implementations, a CVB0 implementation at Microsoft and
+the FLOSS Vowpal Wabbit, but both methods use a variational Bayes LDA
+implementation. LDA has many derivations since it is a probabilistic
+technique. In our FLOSS replication we did not apply stemming as we
+had in our Microsoft study.
+
+\emph{External validity} is threatened by the fact that requirements
+study of this study took
+place on one project, within one organization. We could not
+find an alternative project that was publicly available that
+had enough requirements and maturity. Thus we had to replicate using
+issue reports due to a general lack of formal requirements
+documentation internal to FLOSS projects (some exists but we would
+also need willing participants from those projects).
+External validity was harmed by failing to replicate the utility questions on our FLOSS developer
+survey that we used on our Microsoft developer survey.
+
+%In terms of
+%respondents, they were all related to one project but they
+%were in different teams and had different responsibilities. 
+% We
+% did improve external validity by asking members of different
+% teams to label topics that were not derived from requirements
+% written by their own team.
+
+
+\section{Future Work}
+
+
+
+Future work relevant to this study includes further
+validation by expanding the scope in terms of software domains,
+developers, managers, projects and organizations.
+%  tools, and techniques. In terms of validation we
+% would like to apply this type of survey to more developers
+% and managers; our approach was limited by the size of the
+% project. We would also like to validate against different
+% domains, as we only focused on network relevant
+% requirements.
+
+The survey respondents had many great ideas.
+One respondent desired a UI to dive deep into the relevant artifacts
+to explain behaviour.
+Others suggested that providing your own word distribution as a topic
+would help exploration.
+One PM suggested that Figure
+\ref{fig:topicplot} would be useful as a project dashboard. Thus this
+work can be leveraged in research relevant to knowledge management,
+project dashboards, project effort models and software quality models.
+
+We would like to investigate the effectiveness of automatic topic
+labels versus those labels given by developers using methods such as
+those suggested by Kuhn et al.~\cite{kuhn2007semantic} and De Lucia et
+al.~\cite{de2012using}. The intersection of automatic topic labelling
+and manual topic labelling could help evaluate automatic topic label
+quality.
+
+
+% %  for a tool that allowed deep inspection
+% % of the related, relevant, and at fault artifacts for a
+% % topic.
+% %to the surveys gave many tool ideas. For example, one
+% %respondent indicated a desire for a tool that allowed deep inspection
+% %of the related, relevant, and at fault artifacts for a
+% %topic. Respondents expressed a wish to have direct access to artifacts
+% %that were relevant.
+% %  Another method would be to allow for custom
+% % topics; respondents indicated that some keywords were spurious and
+% % they might be able to query for a more relevant topic if given the
+% % chance.  
+% Our first PM interview in Section \ref{sec:pm} suggested that Figure
+% \ref{fig:topicplot} would be useful as a project dashboard. Thus this
+% work can be leveraged in research relevant to knowledge management,
+% project dashboards, project effort models and software quality models.
+
+
+
+\section{Conclusions}
+
+
+
+In conclusion, we conducted an evaluation of the commonly used
+practice of LDA topic analysis for traceability research 
+(at a high-level) 
+with
+Microsoft developers, rather than students, in a large project with
+comprehensive requirements documents. We also replicated the Microsoft
+case study on 13 FLOSS developers from 13 FLOSS projects with similar conclusions. 
+
+We investigated the relevance of topics extracted from
+requirements to development effort by interviewing
+developers and managers. To relate requirements and
+development activities, we extracted topics from
+requirements documents using LDA, and then inferred the
+relationship to the version control commit messages.
+
+We combined a large corpus of requirements documents
+with the version control system and had stakeholders validate
+if these topics were relevant and if the extracted behaviours
+were accurate.
+We also confirmed the accuracy of extracted behaviours from issue
+tracker extracted topics with FLOSS developers.
+Many topics extracted from requirements and issue reports were relevant
+to features and development effort. Stakeholders who were
+familiar with the underlying requirements documents or issues tended to be
+comfortable labelling the topics and identifying behaviour, but
+those who were not, showed some resistance to the task of
+topic labelling. 
+Topics labelled by non-experts tended to be inaccurate compared with expert labels.
+
+
+Stakeholders indicated that many of the commit-topic
+plots were perceptually valid. The efforts depicted often met
+with their expectation or experiences. Managers could spot
+trends in the global plots while developers tended to spot
+trends in their personal topic-plots.
+We found evidence that topics and their relevant commits often
+match the practitioner's perception of their own effort relevant to a
+topic.
+But we also found that some topics were confusing and not
+easy for practitioners to interpret and label. Our
+recommendations were that topics need to be interpreted,
+pruned, and labelled by experts; thus future topic-related
+research should use labelled topics.
+
+We have shown that topics extracted from requirements
+are relevant, that their version control inferred behaviour is
+perceptually valid. In short, we have provided evidence that
+validates some of the assumptions that researchers had
+previously made about LDA derived topics
+ and have shown that
+practitioners can interpret and label topics.
+%topics can be labelled and analyzed by practitioners.
+% but that does not
+% support others.
+
+\section*{Acknowledgments}
+Thanks to the many managers and developers at Microsoft who
+volunteered their time to participate in our research and provide
+their valuable insights and feedback. Abram Hindle performed some of
+this work as a visiting researcher at Microsoft Research.  Thanks to
+the Natural Sciences and Engineering Research Council of Canada for
+partially funding this work. Thanks to Abram Hindle's first student, Zhang Chenlei, for his feedback.  Thanks to the FLOSS developers who chose
+to participate: Julian Harty, Lisa Milne, Tobias Leich, Ian Cordasco,
+Ricky Elrod, Anthony Grimes, Geoffrey Greer, Nicolas J. Bouliane, Drew
+DeVault, Daniel Huckstep, Chad Whitacre, Devin Joel Austin, and Gerson
+Goulart.
+
+
+
+\balance
+
+\small
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+
+\bibliography{spec-topics}
+
+
+\end{document}
+
+
+
+
+Thanks for carefully addressing the comments made by the reviewers. Everybody acknowledged that the paper has been substantially improved, and therefore they recommend acceptance provided that minor fixes (mostly style issue) are made. The minor revision at this stage is really needed to submit a version with those small issues being addressed.
+Among the other things, please try to clarify the concerns raised by reviewer 2 related to the use of different treatments for issues and commits (there might be valid reasons, but please make them clearer).
+
+We look forward to receiving a quick revision of the paper to expedite
+the process (it won't go back to reviewers)
+
+
+
+-----
+
+[X] Reviewer #1: The authors have addressed all issues that have been raised providing sufficient 
+evidence that topics extracted with LDA make sense to practitioners and are useful 
+to improve the context awareness during software development.
+
+Thus, I suggest to accept the paper.
+
+
+Reviewer #2: Summary:
+
+This paper uses topic analysis to establish high-level traceability links between requirements (or issues from the issue tracking system) and version control commits. More specifically, LDA is used to extract topics from requirements or issues, which are matched by commits whose log messages mention these topics. The match between the effort produced by developers in the form of commits and the high-level topics of the project (in the form of topics extracted from requirements or issues) is validated with actual developers and managers. The perception of the development effort aligns with the development effort embedded in the topics.
+
+Minor Issues:
+
+[X] In section 2.2: "in this study we used 20 words. An example topic
+might be: code improve [...] better make". Why is the example topic
+containing 21 words?
+
+Response: The topic words are ranked, so I could quit listing words at
+any time. It looks like I failed at counting. :( Fixed.
+
+ 
+[X] In section 3.5 stemming was used to infer topics from commits but
+in section 3.6 stemming was not used to infer topics from issues. Why?
+What is the reason to have two different treatments to commits and
+issues? 
+
+Response: In the text we clarify it was an error in replication. It
+was an honest mistake and wasn't correctable by the time the FLOSS
+surveys were sent and repsonded to. The reason was an error in
+replication, the same code was not used for both studies. We added a
+note in threats to validity as well.
+
+[X] Section 2.1 mentions "Gannod et al. [38]", but there is no Gannod
+et al. reference.
+Fixed.
+
+[X] In the caption of figures 3, 6, 7 and 9 mention that the red, vertical bars represent milestones or major revisions.
+
+Fixed in the captions.
+
+[X] Use 3 digit delimiters for large numbers (e.g., "650000" =>
+"650,000" (section 3.3))
+
+Fixed. Sorry. I used the iso standard-spaces and I ensured the spaces
+are included in the rendered version. I also ensured latex rendered
+them properly.
+
+[X] Fix "To relate issue tracker topics to commit we follow same"
+
+Fixed.
+
+[X] Fix "(such as a week, 7 days)"
+
+Fixed.
+
+
+Reviewer #3: The authors did an excellent job addressing the
+reviewer's concerns. The intro is much clearer, and the transitions
+significantly helped the readability of the other sections. 
+
+[X] However, the transition at the beginning of section 4 is
+unclear. First, the phrase "these leveraging topics" is unclear --
+should these be removed? Also, "When one combines that" -> the, and
+"of requirements relevant TO effort".
+
+Fixed. Thanks.
+
+Most of the figures significantly improved in readability (Figure 9
+was great!). Figures 2, 6 and 7 are still a challenge, but more
+readable than before. 
+
+[X] In Figure 2, I liked how the authors stated where the labelled
+topics came from -- can they do the same on the other big figures (3,
+4, etc)? 
+
+Done, added to captions.
+
+[X] Also, "greater is larger" is confusing -- perhaps the authors mean
+greater is more relevant?
+
+Fixed in numerous captions. Thanks.
+
+[X] I appreciate the footnote reference to stop words the authors
+added in 3.4. However, the first use is 3.2 -- can the url be put
+there instead, and referenced in 3.4?
+
+Moved and referenced.
+
+[X] I really liked the addition of Figure 8. However, it looked like a
+stacked bar chart, but according to the caption and the numbers it is
+in fact an overlapping bar chart. Perhaps this can be made clearer in
+the caption somehow. 
+
+Fixed. I fixed the labels and the caption. It was a stacked plot but
+the label for the top one was wrong.
+
+[X] Table 2 and Figure 2 -- make sure the blanks are clearly
+explained. It might be a good idea to hint at this in the caption. 
+
+Fixed and added.
+
+[X] Table 2 -- there was no bold in my print out, not sure what the
+issue is. Maybe the authors can also indicate using some text like an
+asterisk or something?
+
+Fixed and changed to emphasized.
+
+[X] First line of p. 35: that -> than?
+
+Fixed.
+
+[X] I wish section 7 had a little bit more on the implications of using topics in a SE/development process.
+
+In section 7, we added some suggestions regarding use, SE researchers,
+and what is arguably the safter aspect of LDA.
