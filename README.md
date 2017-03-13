@@ -1,10 +1,8 @@
-Purpose
-#######
+# Purpose
 
 Sentence Level Plagarism detection with Python.
 
-LICENSE
-#######
+# LICENSE
 
 Source code (c) 2017 Abram Hindle under Apache 2 license unless otherwise stated.
 
