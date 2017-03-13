@@ -46,8 +46,11 @@ strip1s = vectorizer.transform(strip1)
 x = (strip1s * strip2s.T).A
 y = numpy.nonzero(x >= mincosine)
 print("Minimum cosine distance %s" % mincosine)
+#sorted_indices = numpy.argsort(x[y])
 for i in range(0,len(y[0])):
-    print(i)
+# for i in sorted_indices:
+    print("-----------------")
+    print("%s: %s" % (i,x[y[0][i],y[1][i]]))
     print("-----------------")
     print("Doc 1: %s" % strip1[y[0][i]])
     print("Doc 2: %s" % strip2[y[1][i]])
